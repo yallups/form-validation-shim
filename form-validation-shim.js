@@ -1,3 +1,9 @@
+/**
+ * form-validation-shim
+ * by Shawn Jones <mryallups@gmail.com> https://github.com/yallups
+ * V 0.0.1
+ */
+
 ;(function (document) {
   var eventBinder = Element.prototype.addEventListener || Element.prototype.attachEvent;
 
