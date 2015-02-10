@@ -1,4 +1,12 @@
-;(function (document) {
+;(function (document, $) {
+  var eventBinder = Element.prototype.addEventListener || Element.prototype.attachEvent;
+
+  Element.prototype.addEventListener = Element.prototype.attachEvent = function queuingEventBinder(event, cb) {
+    if (!this._eventsQueue[event]) this._eventsQueue[event] = [];
+    this._eventsQueue[event].push(cb);
+    eventBinder.apply(this, arguments);
+  };
+
   main();
 
   function main() {
@@ -11,18 +19,21 @@
     for (i = 0; i < forms.length; i++) {
       form = forms.item(i);
       origSubmit = form.onsubmit; // Dont have a way of getting all callback for on submit
+      form.onsubmit = null;
 
-      addEventListener(form, 'submit', function onSubmit (e) {
-        if (hasHtml5Validation()) {
-          if (!this.checkValidity()) {
-            e.preventDefault();
-            this.classList.add('invalid');
-          } else {
-            this.classList.remove('invalid');
-            origSubmit && origSubmit();
-          }
-        }
-      });
+      addEventListener(form, 'submit', onSubmit.bind(form, origSubmit));
+    }
+  }
+
+  function onSubmit (cb, e) {
+    if (hasHtml5Validation()) {
+      if (!this.checkValidity()) {
+        e.preventDefault();
+        this.classList.add('invalid');
+      } else {
+        this.classList.remove('invalid');
+        cb && cb();
+      }
     }
   }
 
@@ -53,10 +64,10 @@
   }
 
   function addEventListener (el, event, cb) {
-    if (el.addEventListener) {                    // For all major browsers, except IE 8 and earlier
-      el.addEventListener(event, cb);
-    } else if (el.attachEvent) {                  // For IE 8 and earlier versions
+    if (el.attachEvent) {                  // For IE 8 and earlier versions
       el.attachEvent("on"+event, cb);
+    } else if (el.addEventListener) {                    // For all major browsers, except IE 8 and earlier
+      el.addEventListener(event, cb);
     }
   }
-})(document);
+})(document, jQuery);
