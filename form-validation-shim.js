@@ -31,7 +31,14 @@
     var sheet, forms, i, origSubmit, form;
 
     sheet = makeSheet();
-    sheet.addCSSRule('.invalid input:required:invalid', 'background: #BE4C54;');
+    sheet.addCSSRule(
+      '.invalid input:required:invalid', [
+        'border: 1px solid #a94442;',
+        'background-color: #f2dede;',
+        '-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);',
+        'box-shadow: inset 0 1px 1px rgba(0,0,0,.075);'
+      ].join('')
+    );
 
     forms = document.querySelectorAll('form');
     for (i = 0; i < forms.length; i++) {
@@ -57,11 +64,13 @@
 
   function makeSheet () {
     var sheet;
+    var head = document.head;
     var style = document.createElement("style");
 
     // WebKit hack
     style.appendChild(document.createTextNode(""));
-    document.head.appendChild(style);
+
+    head.insertBefore(style, head.firstElementChild);
 
     sheet = style.sheet;
     sheet.addCSSRule = addCSSRule.bind(sheet, sheet);
