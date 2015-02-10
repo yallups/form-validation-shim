@@ -1,13 +1,25 @@
 ;(function (document) {
   var eventBinder = Element.prototype.addEventListener || Element.prototype.attachEvent;
 
-  Element.prototype.addEventListener = Element.prototype.attachEvent = function queuingEventBinder(event, cb) {
+  Element.prototype._eventsQueue = {};
+  if (Element.prototype.addEventListener) {
+    Element.prototype.addEventListener = queuingEventBinder
+  } else if (Element.prototype.attachEvent)  {
+    Element.prototype.attachEvent = queuingEventBinder;
+  }
+
+  function queuingEventBinder(event, cb) {
     if (!this._eventsQueue[event]) this._eventsQueue[event] = [];
     this._eventsQueue[event].push(cb);
     eventBinder.apply(this, arguments);
-  };
+  }
 
-  main();
+  var readyStateCheckInterval = setInterval(function() {
+    if (document.readyState === "complete") {
+      clearInterval(readyStateCheckInterval);
+      main();
+    }
+  }, 10);
 
   function main() {
     var sheet, forms, i, origSubmit, form;
