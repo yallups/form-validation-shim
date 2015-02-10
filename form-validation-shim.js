@@ -1,4 +1,4 @@
-;(function (document, $) {
+;(function (document) {
   var eventBinder = Element.prototype.addEventListener || Element.prototype.attachEvent;
 
   Element.prototype.addEventListener = Element.prototype.attachEvent = function queuingEventBinder(event, cb) {
@@ -70,4 +70,4 @@
       el.addEventListener(event, cb);
     }
   }
-})(document, jQuery);
+})(document);
