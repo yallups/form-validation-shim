@@ -62,6 +62,7 @@
     }
   }
 
+  // TODO: Use module at https://github.com/yallups/css-sheet-injector.git
   function makeSheet () {
     var sheet;
     var head = document.head;
@@ -74,7 +75,7 @@
 
     sheet = style.sheet;
     sheet.addCSSRule = addCSSRule.bind(sheet, sheet);
-    return style.sheet;
+    return sheet;
   }
 
   function addCSSRule(sheet, selector, rules, index) {
